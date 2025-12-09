@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI-Powered Daily Time Tracking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ✅ ADD THIS -->
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+  <div class="app-root">
+    <!-- Navbar -->
+    <nav class="navbar glass-card">
+      <div class="logo">
+        <span class="logo-icon">🕒</span>
+        <span class="logo-text">TimeTracker</span>
+        <span class="logo-tagline">
+          <span class="sparkle">✦</span>
+        Track. Reflect. Improve.
+      </span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <span id="nav-user-email" class="nav-user-email hidden"></span>
+        <button id="logout-btn" class="btn btn-ghost hidden">Logout</button>
+      </div>
+    </nav>
+
+    <main class="main-layout">
+      <!-- ========== AUTH / LANDING SECTION ========== -->
+      <section id="auth-section" class="auth-section glass-card">
+        <div class="auth-left">
+          <h1>TRACK YOUR DAY<br> <span class="accent">Minute By Minute</span>.</h1>
+          <p class="subtitle">
+            Log your daily activities, analyse your 24 hours, and improve your
+            productivity with simple insights and clean visuals.
+          </p>
+          <ul class="feature-list">
+            <li>✔ Secure login with Firebase Auth</li>
+            <li>✔ Log activities up to 24 hours (1440 mins)</li>
+            <li>✔ Beautiful analytics dashboard</li>
+            <li>✔ “No data” states with friendly UI</li>
+          </ul>
+          <p class="ai-note">🤖 Built with help from AI tools for design & code.</p>
+        </div>
+
+        <div class="auth-right">
+          <div class="card-header">
+            <h2>Welcome back</h2>
+            <p class="subtitle">Login or auto-create an account with email.</p>
+          </div>
+
+          <form id="auth-form" class="auth-form">
+            <label class="field">
+              <span>Email</span>
+              <input type="email" id="email-input" required placeholder="you@example.com" />
+            </label>
+
+            <label class="field">
+              <span>Password</span>
+              <input type="password" id="password-input" required minlength="6" placeholder="••••••••" />
+            </label>
+
+            <button type="submit" class="btn btn-primary full-width">
+              Continue
+            </button>
+
+            <p class="hint">
+              If this email doesn’t exist, we’ll create an account for you automatically.
+            </p>
+
+            <div class="divider">
+              <span>or</span>
+            </div>
+
+            <button type="button" id="google-login-btn" class="btn btn-outline full-width">
+              <span>Continue with Google</span>
+            </button>
+
+            <p id="auth-error" class="error-text hidden"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- ========== TRACKER + DASHBOARD SECTION (only for logged-in users) ========== -->
+      <section id="tracker-section" class="tracker-section hidden">
+        <!-- Date picker and summary -->
+        <div class="top-row">
+          <div class="date-block glass-card">
+            <label for="date-picker">Select date</label>
+            <input type="date" id="date-picker" />
+            <p class="small">
+              Change the date to log or analyse a different day.
+            </p>
+          </div>
+
+          <div class="summary-block glass-card">
+            <p class="summary-line">
+              Total logged:
+              <span id="total-minutes-text" class="value">0 min</span>
+            </p>
+            <p class="summary-line">
+              Remaining:
+              <span id="remaining-minutes-text" class="value positive">1440 min</span>
+            </p>
+            <p class="summary-line small">
+              Max per day: 1440 minutes (24 hours).
+            </p>
+            <button id="analyse-btn" class="btn btn-primary" disabled>
+              Analyse this day
+            </button>
+            <p id="tracker-error" class="error-text hidden"></p>
+          </div>
+        </div>
+
+        <!-- Activity form and list -->
+        <div class="grid-two">
+          <!-- Activity Form -->
+          <div class="glass-card">
+            <h2>Add Activity</h2>
+            <form id="activity-form" class="activity-form">
+              <label class="field">
+                <span>Activity name</span>
+                <input type="text" id="activity-name" required placeholder="e.g. Deep Work, Sleep, Gym" />
+              </label>
+
+              <label class="field">
+                <span>Category</span>
+                <select id="activity-category">
+                  <option value="Work">Work</option>
+                  <option value="Study">Study</option>
+                  <option value="Sleep">Sleep</option>
+                  <option value="Exercise">Exercise</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Chores">Chores</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Duration (minutes)</span>
+                <input type="number" id="activity-duration" required min="1" max="1440" />
+              </label>
+
+              <button type="submit" class="btn btn-primary full-width">
+                Add activity
+              </button>
+            </form>
+          </div>
+
+          <!-- Activities List -->
+          <div class="glass-card">
+            <div class="card-header">
+              <h2>Activities for <span id="list-date-label"></span></h2>
+              <p class="subtitle small">Edit or delete entries for this date.</p>
+            </div>
+            <div id="activities-empty" class="empty-state">
+              <p>📝 No activities yet for this day.</p>
+              <p class="small">Start by adding your first activity on the left.</p>
+            </div>
+            <ul id="activities-list" class="activities-list"></ul>
+          </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <section class="dashboard-section glass-card">
+          <header class="card-header">
+            <h2>Daily Analytics</h2>
+            <p class="subtitle small">
+              Click <strong>Analyse this day</strong> after logging activities.
+            </p>
+          </header>
+
+          <!-- No data view -->
+          <div id="no-data-view" class="no-data-view">
+            <div class="no-data-emoji">📭</div>
+            <h3>No data available for this date</h3>
+            <p>
+              You haven’t logged anything yet for this day.
+              <br />
+              <span class="accent">Start logging your day now and come back here to see insights.</span>
+            </p>
+          </div>
+
+          <!-- Analytics content -->
+          <div id="dashboard-content" class="dashboard-content hidden">
+            <div class="stats-row">
+              <div class="stat-card">
+                <span class="stat-label">Total time</span>
+                <span id="stat-total-hours" class="stat-value">0 h</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Number of activities</span>
+                <span id="stat-activity-count" class="stat-value">0</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Top category</span>
+                <span id="stat-top-category" class="stat-value">–</span>
+              </div>
+            </div>
+
+            <div class="charts-row">
+              <div class="chart-card">
+                <h3 class="chart-title">Time per category (Pie)</h3>
+                <canvas id="pieChart"></canvas>
+              </div>
+              <div class="chart-card">
+                <h3 class="chart-title">Activity durations (Bar)</h3>
+                <canvas id="barChart"></canvas>
+              </div>
+            </div>
+
+            <div class="timeline-card">
+              <h3 class="chart-title">Timeline of the day</h3>
+              <ul id="timeline-list" class="timeline-list"></ul>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer glass-card">
+      <p>🕒 TimeTracker • Built with Firebase, vanilla JS & a little help from AI.</p>
+    </footer>
+  </div>
+
+  <!-- Firebase + App Logic (ES modules) -->
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/tracker.js"></script>
+</body>
+</html>
