@@ -83,3 +83,4 @@ Built with **vanilla JavaScript**, **Firebase Auth + Firestore**, and **Chart.js
   ```text
   users/{userId}/days/{dateString}/activities/{activityId}
 
+
