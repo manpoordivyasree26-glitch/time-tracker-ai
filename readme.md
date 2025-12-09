@@ -8,7 +8,7 @@ Built with **vanilla JavaScript**, **Firebase Auth + Firestore**, and **Chart.js
 
 ## 🚀 Live Demo
 
-**Deployed Link:** `https://<your-username>.github.io/time-tracker-ai/`
+**Deployed Link:** `https://manpoordivyasree26-glitch.github.io/time-tracker-ai/`
 
 ---
 
@@ -82,3 +82,4 @@ Built with **vanilla JavaScript**, **Firebase Auth + Firestore**, and **Chart.js
 
   ```text
   users/{userId}/days/{dateString}/activities/{activityId}
+
